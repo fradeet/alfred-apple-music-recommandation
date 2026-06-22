@@ -1,0 +1,240 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>bundleid</key>
+	<string>top.fradeet.applemusic-recommandation</string>
+	<key>category</key>
+	<string>Internet</string>
+	<key>connections</key>
+	<dict>
+		<key>2EFDEAEE-7583-43D0-BBFA-B85844AE458D</key>
+		<array>
+			<dict>
+				<key>destinationuid</key>
+				<string>B7CDB1C1-BDE9-4FE2-A857-85901CCE64F0</string>
+				<key>modifiers</key>
+				<integer>0</integer>
+				<key>modifiersubtext</key>
+				<string></string>
+				<key>vitoclose</key>
+				<false/>
+			</dict>
+		</array>
+	</dict>
+	<key>createdby</key>
+	<string>fradeet</string>
+	<key>description</key>
+	<string>Retrive your recommandation form Apple Music</string>
+	<key>disabled</key>
+	<false/>
+	<key>name</key>
+	<string>Apple Music Recommandation</string>
+	<key>objects</key>
+	<array>
+		<dict>
+			<key>config</key>
+			<dict>
+				<key>alfredfiltersresults</key>
+				<true/>
+				<key>alfredfiltersresultsmatchmode</key>
+				<integer>0</integer>
+				<key>argumenttreatemptyqueryasnil</key>
+				<true/>
+				<key>argumenttrimmode</key>
+				<integer>0</integer>
+				<key>argumenttype</key>
+				<integer>2</integer>
+				<key>escaping</key>
+				<integer>102</integer>
+				<key>queuedelaycustom</key>
+				<integer>3</integer>
+				<key>queuedelayimmediatelyinitially</key>
+				<true/>
+				<key>queuedelaymode</key>
+				<integer>0</integer>
+				<key>queuemode</key>
+				<integer>1</integer>
+				<key>runningsubtext</key>
+				<string></string>
+				<key>script</key>
+				<string>&lt;?php
+require_once getenv("alfred_preferences") .
+    DIRECTORY_SEPARATOR .
+    "workflows" .
+    DIRECTORY_SEPARATOR .
+    getenv("alfred_workflow_uid") .
+    DIRECTORY_SEPARATOR .
+    "scripts" .
+    DIRECTORY_SEPARATOR .
+    "GetRecRowDetailAlfred.php";
+
+$rid = getenv("rid");
+$cache_dir = getenv("alfred_workflow_cache");
+$cache_file_name = getenv("cache_file_name");
+
+$result = GetRecRowDetailAlfred($rid, $cache_dir, $cache_file_name)
+    |&gt; (fn($x) =&gt; json_encode($x, JSON_UNESCAPED_UNICODE))
+;
+echo $result;
+</string>
+				<key>scriptargtype</key>
+				<integer>1</integer>
+				<key>scriptfile</key>
+				<string></string>
+				<key>subtext</key>
+				<string></string>
+				<key>title</key>
+				<string></string>
+				<key>type</key>
+				<integer>1</integer>
+				<key>withspace</key>
+				<false/>
+			</dict>
+			<key>type</key>
+			<string>alfred.workflow.input.scriptfilter</string>
+			<key>uid</key>
+			<string>B7CDB1C1-BDE9-4FE2-A857-85901CCE64F0</string>
+			<key>version</key>
+			<integer>3</integer>
+		</dict>
+		<dict>
+			<key>config</key>
+			<dict>
+				<key>alfredfiltersresults</key>
+				<true/>
+				<key>alfredfiltersresultsmatchmode</key>
+				<integer>0</integer>
+				<key>argumenttreatemptyqueryasnil</key>
+				<true/>
+				<key>argumenttrimmode</key>
+				<integer>0</integer>
+				<key>argumenttype</key>
+				<integer>1</integer>
+				<key>escaping</key>
+				<integer>100</integer>
+				<key>keyword</key>
+				<string>mr</string>
+				<key>queuedelaycustom</key>
+				<integer>3</integer>
+				<key>queuedelayimmediatelyinitially</key>
+				<true/>
+				<key>queuedelaymode</key>
+				<integer>0</integer>
+				<key>queuemode</key>
+				<integer>1</integer>
+				<key>runningsubtext</key>
+				<string>Loading Recommand...</string>
+				<key>script</key>
+				<string>&lt;?php
+require_once getenv("alfred_preferences") .
+    DIRECTORY_SEPARATOR .
+	"workflows" .
+    DIRECTORY_SEPARATOR .
+    getenv("alfred_workflow_uid") .
+    DIRECTORY_SEPARATOR .
+    "scripts" .
+    DIRECTORY_SEPARATOR .
+    "InitPageAlfred.php";
+
+error_reporting(E_ERROR);
+
+$auth_token = getenv("AUTH_TOKEN");
+$media_token = getenv("MEDIA_TOKEN");
+$cache_dir = getenv("alfred_workflow_cache");
+
+$result = InitRecPageAlfred($auth_token, $media_token, $cache_dir)
+    |&gt; (fn(AlfredSF $x) =&gt; json_encode($x, JSON_UNESCAPED_UNICODE));
+echo $result;
+</string>
+				<key>scriptargtype</key>
+				<integer>1</integer>
+				<key>scriptfile</key>
+				<string></string>
+				<key>subtext</key>
+				<string></string>
+				<key>title</key>
+				<string>Apple Music Recommand...</string>
+				<key>type</key>
+				<integer>1</integer>
+				<key>withspace</key>
+				<true/>
+			</dict>
+			<key>type</key>
+			<string>alfred.workflow.input.scriptfilter</string>
+			<key>uid</key>
+			<string>2EFDEAEE-7583-43D0-BBFA-B85844AE458D</string>
+			<key>version</key>
+			<integer>3</integer>
+		</dict>
+	</array>
+	<key>readme</key>
+	<string></string>
+	<key>uidata</key>
+	<dict>
+		<key>2EFDEAEE-7583-43D0-BBFA-B85844AE458D</key>
+		<dict>
+			<key>xpos</key>
+			<real>50</real>
+			<key>ypos</key>
+			<real>45</real>
+		</dict>
+		<key>B7CDB1C1-BDE9-4FE2-A857-85901CCE64F0</key>
+		<dict>
+			<key>xpos</key>
+			<real>280</real>
+			<key>ypos</key>
+			<real>45</real>
+		</dict>
+	</dict>
+	<key>userconfigurationconfig</key>
+	<array>
+		<dict>
+			<key>config</key>
+			<dict>
+				<key>default</key>
+				<string></string>
+				<key>placeholder</key>
+				<string></string>
+				<key>required</key>
+				<true/>
+				<key>trim</key>
+				<true/>
+			</dict>
+			<key>description</key>
+			<string></string>
+			<key>label</key>
+			<string>Auth Token</string>
+			<key>type</key>
+			<string>textfield</string>
+			<key>variable</key>
+			<string>AUTH_TOKEN</string>
+		</dict>
+		<dict>
+			<key>config</key>
+			<dict>
+				<key>default</key>
+				<string></string>
+				<key>placeholder</key>
+				<string></string>
+				<key>required</key>
+				<true/>
+				<key>trim</key>
+				<true/>
+			</dict>
+			<key>description</key>
+			<string></string>
+			<key>label</key>
+			<string>Media Token</string>
+			<key>type</key>
+			<string>textfield</string>
+			<key>variable</key>
+			<string>MEDIA_TOKEN</string>
+		</dict>
+	</array>
+	<key>version</key>
+	<string>0.1.0</string>
+	<key>webaddress</key>
+	<string></string>
+</dict>
+</plist>
