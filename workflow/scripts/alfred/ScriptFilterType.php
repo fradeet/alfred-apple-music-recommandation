@@ -31,7 +31,7 @@ class AlfredSFItem extends AlfredSFBase
         public ?string $autocomplete = null,
         public ?AlfredSFItemIcon $icon = null,
         public ?string $match = null,
-        public ?array $mods = null,
+        public ?array $mods = null, // TODO type declaration
         public ?string $quicklookurl = null,
         public ?string $subtitle = null,
         public ?AlfredSFItemType $type = null,

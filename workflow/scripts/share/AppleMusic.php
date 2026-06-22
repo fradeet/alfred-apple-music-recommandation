@@ -8,7 +8,7 @@ class AppleMusicAccountConfig
     ) {}
 }
 
-function RequestMusicJson(
+function getRecommandation(
     AppleMusicAccountConfig $account,
     ?string $debug_file_path = null,
 ): string {
@@ -48,20 +48,20 @@ function RequestMusicJson(
     }
 }
 
-function GetRecommendList(object $recObj): array
+function getRecList(object $rec_obj): array
 {
     $result = [];
-    foreach ($recObj->data as $item) {
+    foreach ($rec_obj->data as $item) {
         try {
             // Disable non-title item
             if (
                 property_exists(
-                    $recObj->resources->{'personal-recommendation'}->{$item->id}
-                        ->attributes,
+                    $rec_obj->resources->{'personal-recommendation'}
+                        ->{$item->id}->attributes,
                     "title",
                 )
             ) {
-                $result[] = GetRecommandationRow($recObj, (string) $item->id);
+                $result[] = getRecRow($rec_obj, (string) $item->id);
             }
         } catch (Exception $e) {
             continue;
@@ -70,7 +70,7 @@ function GetRecommendList(object $recObj): array
     return $result;
 }
 
-function GetRecommandationRow(object $recObj, string $rid): array
+function getRecRow(object $recObj, string $rid): array
 {
     $item = $recObj->resources->{'personal-recommendation'}->{$rid};
     $element = [
@@ -85,7 +85,7 @@ function GetRecommandationRow(object $recObj, string $rid): array
         "contents" => (array) (function (object $recObj, array $datalist) {
             $contents = [];
             foreach ($datalist as $item) {
-                $result = GetElementInRow($recObj, $item->id, $item->type);
+                $result = getElementInRow($recObj, $item->id, $item->type);
                 if ($result !== 1) {
                     $contents[] = $result;
                 }
@@ -96,17 +96,17 @@ function GetRecommandationRow(object $recObj, string $rid): array
     return $element;
 }
 
-function GetElementInRow(object $recObj, string $cid, string $type): array|int
+function getElementInRow(object $recObj, string $cid, string $type): array|int
 {
     $item = $recObj->resources->{$type}->{$cid};
 
     if ($type === "albums") {
-        return GetAlbumInfo($item);
+        return getAlbumInfo($item);
     } elseif ($type === "library-albums") {
         // return GetLibAlbumInfo($item);  // Can't get play url.
         return 1;
     } elseif ($type === "playlists") {
-        return GetPlaylistInfo($item);
+        return getPlaylistInfo($item);
     } elseif ($type === "library-playlists") {
         // return GetLibPlaylistInfo($item);  // Can't get play url.
         return 1;
@@ -116,7 +116,7 @@ function GetElementInRow(object $recObj, string $cid, string $type): array|int
     // TODO Artist, Station
 }
 
-function GetPlaylistInfo(object $item): array
+function getPlaylistInfo(object $item): array
 {
     return [
         "id" => (int) $item->id,
@@ -138,7 +138,7 @@ function GetPlaylistInfo(object $item): array
     ];
 }
 
-function GetLibPlaylistInfo(object $item): array
+function getLibPlaylistInfo(object $item): array
 {
     return [
         "id" => (int) $item->id,
@@ -156,7 +156,7 @@ function GetLibPlaylistInfo(object $item): array
     ];
 }
 
-function GetAlbumInfo(object $item): array
+function getAlbumInfo(object $item): array
 {
     return [
         "id" => (int) $item->id,
@@ -178,7 +178,7 @@ function GetAlbumInfo(object $item): array
     ];
 }
 
-function GetLibAlbumInfo(object $item): array
+function getLibAlbumInfo(object $item): array
 {
     return [
         "id" => (int) $item->id,
@@ -197,14 +197,18 @@ function GetLibAlbumInfo(object $item): array
         ],
     ];
 }
-
-enum RecKindType: string
+/**
+ * The Apple Music JSON recommendation internal type, add more when implemented function. JSON Path: `resources[personal-recommendation][][attributes][kind]`
+ */
+enum RecommandKindType: string
 {
     case MusicRecommendations = "music-recommendations";
     // TODO more
 }
-
-enum ResType: string
+/**
+ * The Apple Music interal resource type, add more when implemented function. JSON Path: `resources[type]`
+ */
+enum ResourcesType: string
 {
     case PersonalRecommendation = "personal-recommendation";
     case Albums = "albums";

@@ -2,18 +2,18 @@
 require_once __DIR__ . "/share/AppleMusic.php";
 require_once __DIR__ . "/alfred/ScriptFilterType.php";
 
-function InitRecPageAlfred(
+function initRecPageAlfred(
     string $auth_token,
     string $media_token,
-    string $alfred_cache_dir,
+    string $cache_dir,
     int $cache_duration_time = 14400,
 ): AlfredSF {
-    $rec_json = RequestMusicJson(
+    $rec_json = getRecommandation(
         new AppleMusicAccountConfig($auth_token, $media_token),
     );
     $filename = time() . ".json";
     $cache_file_path =
-        $alfred_cache_dir .
+        $cache_dir .
         DIRECTORY_SEPARATOR .
         "Music-Recommend" .
         DIRECTORY_SEPARATOR .
@@ -32,7 +32,7 @@ function InitRecPageAlfred(
         // Filter out items without a title
         if (
             property_exists($res_item->attributes, "title") &&
-            RecKindType::tryFrom($res_item->attributes->kind) !== null
+            RecommandKindType::tryFrom($res_item->attributes->kind) !== null
         ) {
             $items[] = new AlfredSFItem(
                 title: $res_item->attributes->title->stringForDisplay,
@@ -57,13 +57,13 @@ function InitRecPageAlfred(
     );
 }
 
-function GetRecRowDetailAlfred(
+function getRecRowDetailAlfred(
     string $rid,
-    string $alfred_cache_dir,
+    string $cache_dir,
     string $cache_file_name,
 ): AlfredSF {
     $cache_path =
-        $alfred_cache_dir .
+        $cache_dir .
         DIRECTORY_SEPARATOR .
         "Music-Recommend" .
         DIRECTORY_SEPARATOR .
@@ -77,11 +77,11 @@ function GetRecRowDetailAlfred(
         if (
             array_any(
                 $rec_row->attributes->resourceTypes,
-                fn($v) => ResType::tryFrom($v) !== null,
+                fn($v) => ResourcesType::tryFrom($v) !== null,
             )
         ) {
-            $res_type = ResType::tryFrom($item->type);
-            if ($res_type === ResType::Albums) {
+            $res_type = ResourcesType::tryFrom($item->type);
+            if ($res_type === ResourcesType::Albums) {
                 $items[] = new AlfredSFItem(
                     $rec_res->{$res_type->value}->{$item->id}->attributes->name,
                 );
