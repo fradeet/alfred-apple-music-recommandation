@@ -1,6 +1,6 @@
 <?php
 
-class AccountConfig
+class AppleMusicAccountConfig
 {
     public function __construct(
         public string $authToken,
@@ -9,7 +9,7 @@ class AccountConfig
 }
 
 function RequestMusicJson(
-    AccountConfig $account,
+    AppleMusicAccountConfig $account,
     ?string $debug_file_path = null,
 ): string {
     $ch = curl_init();
