@@ -1,4 +1,18 @@
 <?php
+
+define(
+    "RETURN_ERROR_ALFRED",
+    new AlfredSF(
+        items: [
+            new AlfredSFItem(
+                title: "Unable to Load Results",
+                subtitle: "Open the debugger and try again",
+                valid: false,
+            ),
+        ],
+    ),
+);
+
 class AlfredSFBase implements JsonSerializable
 {
     public function jsonSerialize(): array
