@@ -374,7 +374,7 @@ echo $result;
 		<key>B7CDB1C1-BDE9-4FE2-A857-85901CCE64F0</key>
 		<dict>
 			<key>note</key>
-			<string>Row detail.</string>
+			<string>Row detail</string>
 			<key>xpos</key>
 			<real>215</real>
 			<key>ypos</key>
