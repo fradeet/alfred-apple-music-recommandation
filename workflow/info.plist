@@ -67,13 +67,13 @@ require_once getenv("alfred_preferences") .
     DIRECTORY_SEPARATOR .
     "scripts" .
     DIRECTORY_SEPARATOR .
-    "GetRecRowDetailAlfred.php";
+    "AlfredAdapter.php";
 
 $rid = getenv("rid");
 $cache_dir = getenv("alfred_workflow_cache");
 $cache_file_name = getenv("cache_file_name");
 
-$result = GetRecRowDetailAlfred($rid, $cache_dir, $cache_file_name)
+$result = getRecRowDetailAlfred($rid, $cache_dir, $cache_file_name)
     |&gt; (fn($x) =&gt; json_encode($x, JSON_UNESCAPED_UNICODE))
 ;
 echo $result;
@@ -135,7 +135,7 @@ require_once getenv("alfred_preferences") .
     DIRECTORY_SEPARATOR .
     "scripts" .
     DIRECTORY_SEPARATOR .
-    "InitPageAlfred.php";
+    "AlfredAdapter.php";
 
 error_reporting(E_ERROR);
 
@@ -143,7 +143,7 @@ $auth_token = getenv("AUTH_TOKEN");
 $media_token = getenv("MEDIA_TOKEN");
 $cache_dir = getenv("alfred_workflow_cache");
 
-$result = InitRecPageAlfred($auth_token, $media_token, $cache_dir)
+$result = initRecPageAlfred($auth_token, $media_token, $cache_dir)
     |&gt; (fn(AlfredSF $x) =&gt; json_encode($x, JSON_UNESCAPED_UNICODE));
 echo $result;
 </string>
