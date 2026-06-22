@@ -27,7 +27,7 @@ class AlfredSFItem extends AlfredSFBase
 {
     public function __construct(
         public string $title,
-        public null|array|string $action = null,
+        public null|array|string|AlfredSFItemAction $action = null,
         public null|string|array $arg = null,
         public ?string $autocomplete = null,
         public ?AlfredSFItemIcon $icon = null,
@@ -40,6 +40,16 @@ class AlfredSFItem extends AlfredSFBase
         public ?string $uid = null,
         public ?array $variables = null,
         public ?bool $valid = null,
+    ) {}
+}
+
+class AlfredSFItemAction extends AlfredSFBase
+{
+    public function __construct(
+        public null|string|array $text = null,
+        public ?string $url = null,
+        public ?string $file = null,
+        public ?string $auto = null,
     ) {}
 }
 
