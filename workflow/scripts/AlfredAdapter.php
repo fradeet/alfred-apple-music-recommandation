@@ -2,6 +2,18 @@
 require_once __DIR__ . "/share/AppleMusic.php";
 require_once __DIR__ . "/alfred/ScriptFilterType.php";
 
+/** Define a custom error handler to avoid warning messages break result extraction in Alfred */
+set_error_handler(function ($severity, $message, $file, $line) {
+    if (!(error_reporting() & $severity)) {
+        return false;
+    }
+    fwrite(
+        STDERR,
+        sprintf("[%s] %s in %s:%d\n", $severity, $message, $file, $line),
+    );
+    return true;
+});
+
 function initRecPageAlfred(
     string $auth_token,
     string $media_token,
@@ -81,9 +93,12 @@ function getRecRowDetailAlfred(
             )
         ) {
             $res_type = ResourcesType::tryFrom($item->type);
+            $item = $rec_res->{$res_type->value}->{$item->id};
             if ($res_type === ResourcesType::Albums) {
                 $items[] = new AlfredSFItem(
-                    $rec_res->{$res_type->value}->{$item->id}->attributes->name,
+                    $item->attributes->name,
+                    subtitle: $item->attributes->artistName . " - " . $item->attributes->releaseDate,
+                    arg: $item->attributes->url,
                 );
             }
         }

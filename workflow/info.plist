@@ -8,11 +8,78 @@
 	<string>Internet</string>
 	<key>connections</key>
 	<dict>
+		<key>08785306-A32C-4996-BE92-0B58FA42D6EC</key>
+		<array>
+			<dict>
+				<key>destinationuid</key>
+				<string>DC7170A1-8BCC-4F27-91B0-CCDCFD6D857E</string>
+				<key>modifiers</key>
+				<integer>0</integer>
+				<key>modifiersubtext</key>
+				<string></string>
+				<key>sourceoutputuid</key>
+				<string>60524F44-BEEF-4081-B746-148350554DEE</string>
+				<key>vitoclose</key>
+				<false/>
+			</dict>
+		</array>
 		<key>2EFDEAEE-7583-43D0-BBFA-B85844AE458D</key>
 		<array>
 			<dict>
 				<key>destinationuid</key>
 				<string>B7CDB1C1-BDE9-4FE2-A857-85901CCE64F0</string>
+				<key>modifiers</key>
+				<integer>0</integer>
+				<key>modifiersubtext</key>
+				<string></string>
+				<key>vitoclose</key>
+				<false/>
+			</dict>
+		</array>
+		<key>9FB3ECA6-BFA7-497C-85CE-658107CFEC11</key>
+		<array>
+			<dict>
+				<key>destinationuid</key>
+				<string>08785306-A32C-4996-BE92-0B58FA42D6EC</string>
+				<key>modifiers</key>
+				<integer>0</integer>
+				<key>modifiersubtext</key>
+				<string></string>
+				<key>vitoclose</key>
+				<false/>
+			</dict>
+		</array>
+		<key>B7CDB1C1-BDE9-4FE2-A857-85901CCE64F0</key>
+		<array>
+			<dict>
+				<key>destinationuid</key>
+				<string>C2776556-871B-419C-BC63-D556C2BD1EC2</string>
+				<key>modifiers</key>
+				<integer>0</integer>
+				<key>modifiersubtext</key>
+				<string></string>
+				<key>vitoclose</key>
+				<false/>
+			</dict>
+		</array>
+		<key>C2776556-871B-419C-BC63-D556C2BD1EC2</key>
+		<array>
+			<dict>
+				<key>destinationuid</key>
+				<string>9FB3ECA6-BFA7-497C-85CE-658107CFEC11</string>
+				<key>modifiers</key>
+				<integer>0</integer>
+				<key>modifiersubtext</key>
+				<string></string>
+				<key>vitoclose</key>
+				<false/>
+			</dict>
+		</array>
+		<key>DC7170A1-8BCC-4F27-91B0-CCDCFD6D857E</key>
+		<array>
+			<dict>
+				<key>destinationuid</key>
+				<string>832E2C8E-2F5F-44B5-AF9F-C2CC271DF30E</string>
 				<key>modifiers</key>
 				<integer>0</integer>
 				<key>modifiersubtext</key>
@@ -32,6 +99,23 @@
 	<string>Apple Music Recommandation</string>
 	<key>objects</key>
 	<array>
+		<dict>
+			<key>config</key>
+			<dict>
+				<key>inputmode</key>
+				<integer>0</integer>
+				<key>outputmode</key>
+				<integer>0</integer>
+				<key>shortcut</key>
+				<string>Play via Apple Music URL</string>
+			</dict>
+			<key>type</key>
+			<string>alfred.workflow.automation.runshortcut</string>
+			<key>uid</key>
+			<string>832E2C8E-2F5F-44B5-AF9F-C2CC271DF30E</string>
+			<key>version</key>
+			<integer>1</integer>
+		</dict>
 		<dict>
 			<key>config</key>
 			<dict>
@@ -101,6 +185,24 @@ echo $result;
 		<dict>
 			<key>config</key>
 			<dict>
+				<key>tasksettings</key>
+				<dict>
+					<key>target_shortcut</key>
+					<string>Play via Apple Music URL</string>
+				</dict>
+				<key>taskuid</key>
+				<string>com.alfredapp.automation.core/shortcuts/shortcut.installed</string>
+			</dict>
+			<key>type</key>
+			<string>alfred.workflow.automation.task</string>
+			<key>uid</key>
+			<string>9FB3ECA6-BFA7-497C-85CE-658107CFEC11</string>
+			<key>version</key>
+			<integer>1</integer>
+		</dict>
+		<dict>
+			<key>config</key>
+			<dict>
 				<key>alfredfiltersresults</key>
 				<true/>
 				<key>alfredfiltersresultsmatchmode</key>
@@ -137,8 +239,6 @@ require_once getenv("alfred_preferences") .
     DIRECTORY_SEPARATOR .
     "AlfredAdapter.php";
 
-error_reporting(E_ERROR);
-
 $auth_token = getenv("AUTH_TOKEN");
 $media_token = getenv("MEDIA_TOKEN");
 $cache_dir = getenv("alfred_workflow_cache");
@@ -167,24 +267,132 @@ echo $result;
 			<key>version</key>
 			<integer>3</integer>
 		</dict>
+		<dict>
+			<key>config</key>
+			<dict>
+				<key>argument</key>
+				<string>{var:music_url}</string>
+				<key>passthroughargument</key>
+				<false/>
+				<key>variables</key>
+				<dict/>
+			</dict>
+			<key>type</key>
+			<string>alfred.workflow.utility.argument</string>
+			<key>uid</key>
+			<string>DC7170A1-8BCC-4F27-91B0-CCDCFD6D857E</string>
+			<key>version</key>
+			<integer>1</integer>
+		</dict>
+		<dict>
+			<key>config</key>
+			<dict>
+				<key>conditions</key>
+				<array>
+					<dict>
+						<key>inputstring</key>
+						<string></string>
+						<key>matchcasesensitive</key>
+						<false/>
+						<key>matchmode</key>
+						<integer>0</integer>
+						<key>matchstring</key>
+						<string>true</string>
+						<key>outputlabel</key>
+						<string>Play song</string>
+						<key>uid</key>
+						<string>60524F44-BEEF-4081-B746-148350554DEE</string>
+					</dict>
+				</array>
+				<key>elselabel</key>
+				<string>else</string>
+				<key>hideelse</key>
+				<false/>
+			</dict>
+			<key>type</key>
+			<string>alfred.workflow.utility.conditional</string>
+			<key>uid</key>
+			<string>08785306-A32C-4996-BE92-0B58FA42D6EC</string>
+			<key>version</key>
+			<integer>1</integer>
+		</dict>
+		<dict>
+			<key>config</key>
+			<dict>
+				<key>argument</key>
+				<string>{query}</string>
+				<key>passthroughargument</key>
+				<true/>
+				<key>variables</key>
+				<dict>
+					<key>music_url</key>
+					<string>{query}</string>
+				</dict>
+			</dict>
+			<key>type</key>
+			<string>alfred.workflow.utility.argument</string>
+			<key>uid</key>
+			<string>C2776556-871B-419C-BC63-D556C2BD1EC2</string>
+			<key>version</key>
+			<integer>1</integer>
+		</dict>
 	</array>
 	<key>readme</key>
 	<string></string>
 	<key>uidata</key>
 	<dict>
-		<key>2EFDEAEE-7583-43D0-BBFA-B85844AE458D</key>
+		<key>08785306-A32C-4996-BE92-0B58FA42D6EC</key>
 		<dict>
 			<key>xpos</key>
-			<real>50</real>
+			<real>620</real>
+			<key>ypos</key>
+			<real>65</real>
+		</dict>
+		<key>2EFDEAEE-7583-43D0-BBFA-B85844AE458D</key>
+		<dict>
+			<key>note</key>
+			<string>Get and cache</string>
+			<key>xpos</key>
+			<real>30</real>
+			<key>ypos</key>
+			<real>45</real>
+		</dict>
+		<key>832E2C8E-2F5F-44B5-AF9F-C2CC271DF30E</key>
+		<dict>
+			<key>xpos</key>
+			<real>800</real>
+			<key>ypos</key>
+			<real>30</real>
+		</dict>
+		<key>9FB3ECA6-BFA7-497C-85CE-658107CFEC11</key>
+		<dict>
+			<key>xpos</key>
+			<real>460</real>
 			<key>ypos</key>
 			<real>45</real>
 		</dict>
 		<key>B7CDB1C1-BDE9-4FE2-A857-85901CCE64F0</key>
 		<dict>
+			<key>note</key>
+			<string>Row detail.</string>
 			<key>xpos</key>
-			<real>280</real>
+			<real>215</real>
 			<key>ypos</key>
 			<real>45</real>
+		</dict>
+		<key>C2776556-871B-419C-BC63-D556C2BD1EC2</key>
+		<dict>
+			<key>xpos</key>
+			<real>380</real>
+			<key>ypos</key>
+			<real>75</real>
+		</dict>
+		<key>DC7170A1-8BCC-4F27-91B0-CCDCFD6D857E</key>
+		<dict>
+			<key>xpos</key>
+			<real>720</real>
+			<key>ypos</key>
+			<real>60</real>
 		</dict>
 	</dict>
 	<key>userconfigurationconfig</key>
