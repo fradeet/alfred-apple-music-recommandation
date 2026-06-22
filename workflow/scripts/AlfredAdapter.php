@@ -1,7 +1,5 @@
 <?php
-require_once __DIR__ . "/share/GetMusicList.php";
-require_once __DIR__ . "/share/GetMusicRecommandation.php";
-require_once __DIR__ . "/share/MusicRecommandType.php";
+require_once __DIR__ . "/share/AppleMusic.php";
 require_once __DIR__ . "/alfred/ScriptFilterType.php";
 
 function InitRecPageAlfred(
@@ -10,7 +8,9 @@ function InitRecPageAlfred(
     string $alfred_cache_dir,
     int $cache_duration_time = 14400,
 ): AlfredSF {
-    $rec_json = RequestMusicJson(new AppleMusicAccountConfig($auth_token, $media_token));
+    $rec_json = RequestMusicJson(
+        new AppleMusicAccountConfig($auth_token, $media_token),
+    );
     $filename = time() . ".json";
     $cache_file_path =
         $alfred_cache_dir .
