@@ -47,7 +47,7 @@ function initRecPageAlfred(
             RecommandKindType::tryFrom($res_item->attributes->kind) !== null
         ) {
             $items[] = new AlfredSFItem(
-                title: $res_item->attributes->title->stringForDisplay,
+                $res_item->attributes->title->stringForDisplay,
                 text: new AlfredSFItemText(
                     copy: $res_item->attributes->title->stringForDisplay,
                     largetype: $res_item->attributes->title->stringForDisplay,
@@ -69,6 +69,12 @@ function initRecPageAlfred(
     );
 }
 
+/**
+ * @param string $rid
+ * @param string $cache_dir
+ * @param string $cache_file_name Use cache file name to avoid get other file when refresh with loosereload.
+ * @return AlfredSF
+ */
 function getRecRowDetailAlfred(
     string $rid,
     string $cache_dir,
@@ -97,9 +103,13 @@ function getRecRowDetailAlfred(
             if ($res_type === ResourcesType::Albums) {
                 $items[] = new AlfredSFItem(
                     $item->attributes->name,
-                    subtitle: $item->attributes->artistName . " - " . $item->attributes->releaseDate,
+                    subtitle: $item->attributes->artistName .
+                        " - " .
+                        $item->attributes->releaseDate,
                     arg: $item->attributes->url,
                 );
+            } elseif ($res_type === ResourcesType::Playlists) {
+                // TODO
             }
         }
     }
