@@ -1,6 +1,8 @@
 <?php
+declare(strict_types=1);
 require_once __DIR__ . "/share/AppleMusic.php";
 require_once __DIR__ . "/AlfredSFType/AlfredScriptFilterType.php";
+
 
 /** Define a custom error handler to avoid warning messages break result extraction in Alfred */
 set_error_handler(function ($severity, $message, $file, $line) {
