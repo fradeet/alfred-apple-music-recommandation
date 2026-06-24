@@ -5,3 +5,7 @@ A Alfred workflow, get Apple Music recommandation by keyboard.
 ```bash
 git clone --recurse-submodules https://github.com/fradeet/alfred-apple-music-recommandation
 ```
+
+## Roadmap
+- [] Cache images and use grid view
+- [] Use shortcut key to control directly play or add to queue
