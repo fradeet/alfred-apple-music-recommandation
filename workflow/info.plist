@@ -130,6 +130,73 @@
 				<key>argumenttype</key>
 				<integer>1</integer>
 				<key>escaping</key>
+				<integer>100</integer>
+				<key>keyword</key>
+				<string>{var:KEY_RECOMMAND}</string>
+				<key>queuedelaycustom</key>
+				<integer>3</integer>
+				<key>queuedelayimmediatelyinitially</key>
+				<true/>
+				<key>queuedelaymode</key>
+				<integer>0</integer>
+				<key>queuemode</key>
+				<integer>1</integer>
+				<key>runningsubtext</key>
+				<string>Loading Recommandation...</string>
+				<key>script</key>
+				<string>&lt;?php
+require_once getenv("alfred_preferences") .
+    DIRECTORY_SEPARATOR .
+	"workflows" .
+    DIRECTORY_SEPARATOR .
+    getenv("alfred_workflow_uid") .
+    DIRECTORY_SEPARATOR .
+    "scripts" .
+    DIRECTORY_SEPARATOR .
+    "AlfredAdapter.php";
+
+$auth_token = getenv("AUTH_TOKEN");
+$media_token = getenv("MEDIA_TOKEN");
+$cache_dir = getenv("alfred_workflow_cache");
+
+$result = initRecPageAlfred($auth_token, $media_token, $cache_dir)
+    |&gt; (fn(AlfredSF $x) =&gt; json_encode($x, JSON_UNESCAPED_UNICODE));
+echo $result;
+</string>
+				<key>scriptargtype</key>
+				<integer>1</integer>
+				<key>scriptfile</key>
+				<string></string>
+				<key>subtext</key>
+				<string></string>
+				<key>title</key>
+				<string>Apple Music Recommand...</string>
+				<key>type</key>
+				<integer>1</integer>
+				<key>withspace</key>
+				<true/>
+			</dict>
+			<key>type</key>
+			<string>alfred.workflow.input.scriptfilter</string>
+			<key>uid</key>
+			<string>2EFDEAEE-7583-43D0-BBFA-B85844AE458D</string>
+			<key>version</key>
+			<integer>3</integer>
+		</dict>
+		<dict>
+			<key>config</key>
+			<dict>
+				<key>alfredfiltersresults</key>
+				<true/>
+				<key>alfredfiltersresultsmatchmode</key>
+				<integer>0</integer>
+				<key>argumenttreatemptyqueryasnil</key>
+				<true/>
+				<key>argumenttrimmode</key>
+				<integer>0</integer>
+				<key>argumenttype</key>
+				<integer>1</integer>
+				<key>escaping</key>
 				<integer>102</integer>
 				<key>queuedelaycustom</key>
 				<integer>3</integer>
@@ -199,73 +266,6 @@ echo $result;
 			<string>9FB3ECA6-BFA7-497C-85CE-658107CFEC11</string>
 			<key>version</key>
 			<integer>1</integer>
-		</dict>
-		<dict>
-			<key>config</key>
-			<dict>
-				<key>alfredfiltersresults</key>
-				<true/>
-				<key>alfredfiltersresultsmatchmode</key>
-				<integer>0</integer>
-				<key>argumenttreatemptyqueryasnil</key>
-				<true/>
-				<key>argumenttrimmode</key>
-				<integer>0</integer>
-				<key>argumenttype</key>
-				<integer>1</integer>
-				<key>escaping</key>
-				<integer>100</integer>
-				<key>keyword</key>
-				<string>mr</string>
-				<key>queuedelaycustom</key>
-				<integer>3</integer>
-				<key>queuedelayimmediatelyinitially</key>
-				<true/>
-				<key>queuedelaymode</key>
-				<integer>0</integer>
-				<key>queuemode</key>
-				<integer>1</integer>
-				<key>runningsubtext</key>
-				<string>Loading Recommand...</string>
-				<key>script</key>
-				<string>&lt;?php
-require_once getenv("alfred_preferences") .
-    DIRECTORY_SEPARATOR .
-	"workflows" .
-    DIRECTORY_SEPARATOR .
-    getenv("alfred_workflow_uid") .
-    DIRECTORY_SEPARATOR .
-    "scripts" .
-    DIRECTORY_SEPARATOR .
-    "AlfredAdapter.php";
-
-$auth_token = getenv("AUTH_TOKEN");
-$media_token = getenv("MEDIA_TOKEN");
-$cache_dir = getenv("alfred_workflow_cache");
-
-$result = initRecPageAlfred($auth_token, $media_token, $cache_dir)
-    |&gt; (fn(AlfredSF $x) =&gt; json_encode($x, JSON_UNESCAPED_UNICODE));
-echo $result;
-</string>
-				<key>scriptargtype</key>
-				<integer>1</integer>
-				<key>scriptfile</key>
-				<string></string>
-				<key>subtext</key>
-				<string></string>
-				<key>title</key>
-				<string>Apple Music Recommand...</string>
-				<key>type</key>
-				<integer>1</integer>
-				<key>withspace</key>
-				<true/>
-			</dict>
-			<key>type</key>
-			<string>alfred.workflow.input.scriptfilter</string>
-			<key>uid</key>
-			<string>2EFDEAEE-7583-43D0-BBFA-B85844AE458D</string>
-			<key>version</key>
-			<integer>3</integer>
 		</dict>
 		<dict>
 			<key>config</key>
@@ -397,6 +397,27 @@ echo $result;
 	</dict>
 	<key>userconfigurationconfig</key>
 	<array>
+		<dict>
+			<key>config</key>
+			<dict>
+				<key>default</key>
+				<string>amr</string>
+				<key>placeholder</key>
+				<string>amr</string>
+				<key>required</key>
+				<false/>
+				<key>trim</key>
+				<true/>
+			</dict>
+			<key>description</key>
+			<string></string>
+			<key>label</key>
+			<string>Keyword</string>
+			<key>type</key>
+			<string>textfield</string>
+			<key>variable</key>
+			<string>KEY_RECOMMAND</string>
+		</dict>
 		<dict>
 			<key>config</key>
 			<dict>
