@@ -215,3 +215,58 @@ enum ResourcesType: string
     case Playlists = "playlists";
     // TODO Artist, Stations, Library-*
 }
+
+// Codex TODO 填写（替换）URL 中的模版
+// 输入：缩略图大小，URL 模版 例如 https://is1-ssl.mzstatic.com/image/thumb/Music69/v4/13/2e/c3/132ec362-7577-8f63-cbad-162f1e61fe89/075679916068.jpg/{w}x{h}bb.{f}
+// 输出：替换后的 URL
+function fillThumbTemplate(string $url_template, string $px_size): string
+{
+    // 处理 w 和 h 模版（宽与高），正方形。f 为原扩展名
+    // 文件扩展名与原文件相同
+	return value;
+}
+
+// Codex TODO 清洗对象中不显示的类型
+// 输入：Music 推荐对象
+// 输出：处理后的 Music 推荐对象
+// 理由：剔除不需要显示的项目，防止引入获取不到所需字段的项目（例如 Library 系列项目）
+function clearUnUseItem(object $rec): object
+{
+    // 根据 ResourcesType 清理 Resource 中的字段
+    // 清理角度：1. Resource 中除 ResourcesType 的类型；2. PersonalRecommendation 推荐列表中的非 ResourcesType 的元素。
+    // 直接移除不需要的元素
+    return value;
+}
+
+// Codex TODO 获取整行的推荐对象的封面图
+// 输入：一个推荐行
+// 输出：字典嵌套数组：项目类型（例如 Albums）嵌套元素为“键：项目 ID，值：拼接后的图片路径”
+// 示例：
+// [
+//   "albums" => [
+//     "11111" => "~/path/to"
+//   ]
+// ]
+function getRowThumb(object $rec_row): array
+{
+    // code
+    // 调用 fillThumbTemplate
+    return value;
+}
+
+
+// Codex TODO 缓存每个推荐列表（每行）的前 4 张封面图，并拼接为一张大图
+// 输入：Music 对象
+// 输出：字典嵌套数组：键：推荐 ID，值：拼接后的图片路径
+// 示例：
+function genHead4Thumb(object $rec): array
+{
+    // 调用 fillThumbTemplate
+    // 使用 GD 拼图
+    // 返回示例：
+    // [
+    //   "11111" => "~/path/to"
+    // ]
+
+    return value;
+}

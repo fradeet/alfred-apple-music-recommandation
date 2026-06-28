@@ -3,7 +3,6 @@ declare(strict_types=1);
 require_once __DIR__ . "/share/AppleMusic.php";
 require_once __DIR__ . "/AlfredSFType/AlfredScriptFilterType.php";
 
-
 /** Define a custom error handler to avoid warning messages break result extraction in Alfred */
 set_error_handler(function ($severity, $message, $file, $line) {
     if (!(error_reporting() & $severity)) {
@@ -25,6 +24,7 @@ function initRecPageAlfred(
     $rec_json = getRecommandation(
         new AppleMusicAccountConfig($auth_token, $media_token),
     );
+    // Codex TODO 清洗对象，不显示的 clearUnUseItem
     $filename = time() . ".json";
     $cache_file_path =
         $cache_dir .
@@ -32,11 +32,21 @@ function initRecPageAlfred(
         "Music-Recommend" .
         DIRECTORY_SEPARATOR .
         $filename;
+    $cache_thumb_path =
+        $cache_dir . DIRECTORY_SEPARATOR . "Cache" . DIRECTORY_SEPARATOR;
+
+    $head_4_path =
+        $cache_thumb_path .
+        DIRECTORY_SEPARATOR .
+        time() .
+        DIRECTORY_SEPARATOR .
+        $filename;
+
     $dir = dirname($cache_file_path);
     if (!is_dir($dir)) {
         mkdir($dir, recursive: true);
     }
-
+    // Codex TODO genHead4 缓存“符合条件”的推荐列表的前 4 张在展示类型中的封面图片并拼接，后续用于展示。
     file_put_contents($cache_file_path, $rec_json);
     $rec_obj = json_decode($rec_json);
     $items = [];
@@ -101,6 +111,9 @@ function getRecRowDetailAlfred(
             )
         ) {
             $res_type = ResourcesType::tryFrom($item->type);
+            if ($res_type === null) {
+                continue;
+            }
             $item = $rec_res->{$res_type->value}->{$item->id};
             if ($res_type === ResourcesType::Albums) {
                 $items[] = new AlfredSFItem(
