@@ -1,4 +1,5 @@
 <?php
+require_once __DIR__ . "/LocalCache.php";
 
 class AppleMusicAccountConfig
 {
@@ -221,9 +222,25 @@ enum ResourcesType: string
 // 输出：替换后的 URL
 function fillThumbTemplate(string $url_template, string $px_size): string
 {
-    // 处理 w 和 h 模版（宽与高），正方形。f 为原扩展名
-    // 文件扩展名与原文件相同
-	return value;
+    $extension = "jpg";
+    if (preg_match("/\\.([A-Za-z0-9]+)\\/\\{w\\}/", $url_template, $matches)) {
+        $extension = strtolower($matches[1]);
+    } else {
+        $path = parse_url($url_template, PHP_URL_PATH) ?: "";
+        $pathBeforeTemplate = strstr($path, "/{w}", true);
+        $candidate = pathinfo($pathBeforeTemplate ?: $path, PATHINFO_EXTENSION)
+            |> strtolower(...)
+        ;
+        if ($candidate !== "") {
+            $extension = $candidate;
+        }
+    }
+
+    return str_replace(
+        ["{w}", "{h}", "{f}"],
+        [$px_size, $px_size, $extension],
+        $url_template,
+    );
 }
 
 // Codex TODO 清洗对象中不显示的类型
@@ -232,41 +249,289 @@ function fillThumbTemplate(string $url_template, string $px_size): string
 // 理由：剔除不需要显示的项目，防止引入获取不到所需字段的项目（例如 Library 系列项目）
 function clearUnUseItem(object $rec): object
 {
-    // 根据 ResourcesType 清理 Resource 中的字段
-    // 清理角度：1. Resource 中除 ResourcesType 的类型；2. PersonalRecommendation 推荐列表中的非 ResourcesType 的元素。
-    // 直接移除不需要的元素
-    return value;
+    if (!isset($rec->resources) || !is_object($rec->resources)) {
+        return $rec;
+    }
+
+    $allowedResourceTypes = array_map(
+        fn(ResourcesType $type): string => $type->value,
+        ResourcesType::cases(),
+    );
+    $displayResourceTypes = [
+        ResourcesType::Albums->value,
+        ResourcesType::Playlists->value,
+    ];
+
+    foreach (get_object_vars($rec->resources) |> array_keys(...) as $type) {
+        if (!in_array($type, $allowedResourceTypes, true)) {
+            unset($rec->resources->{$type});
+        }
+    }
+
+    $personalType = ResourcesType::PersonalRecommendation->value;
+    if (
+        !isset($rec->resources->{$personalType}) ||
+        !is_object($rec->resources->{$personalType})
+    ) {
+        return $rec;
+    }
+
+    foreach (
+        get_object_vars($rec->resources->{$personalType})
+        as $rid => $row
+    ) {
+        $resourceTypes =
+            isset($row->attributes->resourceTypes) &&
+            is_array($row->attributes->resourceTypes)
+                ? $row->attributes->resourceTypes
+                : [];
+        $row->attributes->resourceTypes = array_filter(
+            $resourceTypes,
+            fn($type): bool => is_string($type) &&
+                in_array($type, $displayResourceTypes, true),
+        )
+            |> array_values(...)
+        ;
+
+        $contents =
+            isset($row->relationships->contents->data) &&
+            is_array($row->relationships->contents->data)
+                ? $row->relationships->contents->data
+                : [];
+        $row->relationships->contents->data = array_values(
+            array_filter($contents, function ($item) use (
+                $rec,
+                $displayResourceTypes,
+            ): bool {
+                if (
+                    !isset($item->type, $item->id) ||
+                    !in_array($item->type, $displayResourceTypes, true)
+                ) {
+                    return false;
+                }
+                return isset($rec->resources->{$item->type}) &&
+                    is_object($rec->resources->{$item->type}) &&
+                    isset($rec->resources->{$item->type}->{$item->id});
+            }),
+        );
+
+        if (
+            $row->attributes->resourceTypes === [] ||
+            $row->relationships->contents->data === []
+        ) {
+            unset($rec->resources->{$personalType}->{$rid});
+        }
+    }
+
+    if (isset($rec->data) && is_array($rec->data)) {
+        $rec->data = array_filter(
+            $rec->data,
+            fn($item): bool => isset($item->id, $item->type) &&
+                $item->type === $personalType &&
+                isset($rec->resources->{$personalType}->{$item->id}),
+        )
+            |> array_values(...)
+        ;
+    }
+
+    return $rec;
 }
 
 // Codex TODO 获取整行的推荐对象的封面图
 // 输入：一个推荐行
 // 输出：字典嵌套数组：项目类型（例如 Albums）嵌套元素为“键：项目 ID，值：拼接后的图片路径”
+// 没有的就下载
 // 示例：
 // [
 //   "albums" => [
 //     "11111" => "~/path/to"
 //   ]
 // ]
-function getRowThumb(object $rec_row): array
-{
-    // code
-    // 调用 fillThumbTemplate
-    return value;
+function getRowThumb(
+    object $rec_row,
+    ?object $resources,
+    string $cacheDir,
+    string $px_size = "256",
+): array {
+    $result = [];
+    $requests = [];
+    $requestKeys = [];
+    $contents =
+        isset($rec_row->relationships->contents->data) &&
+        is_array($rec_row->relationships->contents->data)
+            ? $rec_row->relationships->contents->data
+            : [];
+
+    foreach ($contents as $item) {
+        if (!isset($item->type, $item->id)) {
+            continue;
+        }
+        $resType = ResourcesType::tryFrom($item->type);
+        if (
+            $resType !== ResourcesType::Albums &&
+            $resType !== ResourcesType::Playlists
+        ) {
+            continue;
+        }
+
+        $resource = null;
+        if (
+            $resources !== null &&
+            isset($resources->{$resType->value}) &&
+            is_object($resources->{$resType->value}) &&
+            isset($resources->{$resType->value}->{$item->id})
+        ) {
+            $resource = $resources->{$resType->value}->{$item->id};
+        } elseif (isset($item->attributes->artwork)) {
+            $resource = $item;
+        }
+
+        if (!isset($resource->attributes->artwork->url)) {
+            continue;
+        }
+
+        $requestKeys[] = [
+            "type" => $resType->value,
+            "id" => (string) $item->id,
+        ];
+        $requests[] = [
+            "url" => fillThumbTemplate(
+                (string) $resource->attributes->artwork->url,
+                $px_size,
+            ),
+            "type" => $resType->value,
+            "id" => (string) $item->id,
+            "size" => $px_size,
+        ];
+    }
+
+    foreach (cacheFilesParallel($requests, $cacheDir) as $index => $path) {
+        if (!is_string($path) || !isset($requestKeys[$index])) {
+            continue;
+        }
+        $result[$requestKeys[$index]["type"]][
+            $requestKeys[$index]["id"]
+        ] = $path;
+    }
+
+    return $result;
 }
 
+function createHead4Thumb(
+    array $thumbPaths,
+    string $outputPath,
+    int $tileSize = 256,
+): bool {
+    $validPaths = array_values(
+        array_filter(
+            $thumbPaths,
+            fn($path): bool => is_string($path) && is_file($path),
+        ),
+    );
+    if ($validPaths === []) {
+        return false;
+    }
+
+    $canvasSize = $tileSize * 2;
+    $canvas = imagecreatetruecolor($canvasSize, $canvasSize);
+    $background = imagecolorallocate($canvas, 245, 245, 245);
+    imagefill($canvas, 0, 0, $background);
+
+    foreach (array_slice($validPaths, 0, 4) as $index => $path) {
+        $source = @imagecreatefromstring((string) file_get_contents($path));
+        if ($source === false) {
+            continue;
+        }
+
+        $width = imagesx($source);
+        $height = imagesy($source);
+        $cropSize = min($width, $height);
+        $srcX = (int) floor(($width - $cropSize) / 2);
+        $srcY = (int) floor(($height - $cropSize) / 2);
+        $dstX = ($index % 2) * $tileSize;
+        $dstY = intdiv($index, 2) * $tileSize;
+
+        imagecopyresampled(
+            $canvas,
+            $source,
+            $dstX,
+            $dstY,
+            $srcX,
+            $srcY,
+            $tileSize,
+            $tileSize,
+            $cropSize,
+            $cropSize,
+        );
+    }
+
+    $dir = dirname($outputPath);
+    if (!is_dir($dir)) {
+        mkdir($dir, recursive: true);
+    }
+    $saved = imagejpeg($canvas, $outputPath, 90);
+
+    return $saved;
+}
 
 // Codex TODO 缓存每个推荐列表（每行）的前 4 张封面图，并拼接为一张大图
 // 输入：Music 对象
 // 输出：字典嵌套数组：键：推荐 ID，值：拼接后的图片路径
 // 示例：
-function genHead4Thumb(object $rec): array
+function genHead4Thumb(object $rec, string $cacheDir): array
 {
-    // 调用 fillThumbTemplate
-    // 使用 GD 拼图
-    // 返回示例：
-    // [
-    //   "11111" => "~/path/to"
-    // ]
+    $result = [];
+    $artworkCacheDir = $cacheDir . DIRECTORY_SEPARATOR . "Artwork";
+    $headCacheDir = $cacheDir . DIRECTORY_SEPARATOR . "Head4";
+    $personalType = ResourcesType::PersonalRecommendation->value;
 
-    return value;
+    if (
+        !isset($rec->data, $rec->resources->{$personalType}) ||
+        !is_array($rec->data)
+    ) {
+        return $result;
+    }
+
+    foreach ($rec->data as $dataItem) {
+        if (
+            !isset(
+                $dataItem->id,
+                $rec->resources->{$personalType}->{$dataItem->id},
+            )
+        ) {
+            continue;
+        }
+
+        $rid = (string) $dataItem->id;
+        $row = $rec->resources->{$personalType}->{$rid};
+        $thumbGroups = getRowThumb($row, $rec->resources, $artworkCacheDir);
+        $thumbPaths = [];
+        foreach ($thumbGroups as $items) {
+            foreach ($items as $path) {
+                $thumbPaths[] = $path;
+                if (count($thumbPaths) >= 4) {
+                    break 2;
+                }
+            }
+        }
+        if ($thumbPaths === []) {
+            continue;
+        }
+
+        $headPath =
+            $headCacheDir .
+            DIRECTORY_SEPARATOR .
+            sanitizeCacheNamePart($rid) .
+            ".jpg";
+        if (is_file($headPath) && is_readable($headPath)) {
+            $result[$rid] = $headPath;
+            continue;
+        }
+
+        if (createHead4Thumb($thumbPaths, $headPath)) {
+            $result[$rid] = $headPath;
+        }
+    }
+
+    return $result;
 }

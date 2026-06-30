@@ -23,11 +23,37 @@
 				<false/>
 			</dict>
 		</array>
+		<key>09B43DC3-7ACB-421F-B0ED-5DB657B92B1A</key>
+		<array>
+			<dict>
+				<key>destinationuid</key>
+				<string>C2776556-871B-419C-BC63-D556C2BD1EC2</string>
+				<key>modifiers</key>
+				<integer>0</integer>
+				<key>modifiersubtext</key>
+				<string></string>
+				<key>vitoclose</key>
+				<false/>
+			</dict>
+		</array>
+		<key>1CEF41DA-C13F-4179-8129-626DA969153C</key>
+		<array>
+			<dict>
+				<key>destinationuid</key>
+				<string>09B43DC3-7ACB-421F-B0ED-5DB657B92B1A</string>
+				<key>modifiers</key>
+				<integer>0</integer>
+				<key>modifiersubtext</key>
+				<string></string>
+				<key>vitoclose</key>
+				<false/>
+			</dict>
+		</array>
 		<key>2EFDEAEE-7583-43D0-BBFA-B85844AE458D</key>
 		<array>
 			<dict>
 				<key>destinationuid</key>
-				<string>B7CDB1C1-BDE9-4FE2-A857-85901CCE64F0</string>
+				<string>1CEF41DA-C13F-4179-8129-626DA969153C</string>
 				<key>modifiers</key>
 				<integer>0</integer>
 				<key>modifiersubtext</key>
@@ -41,19 +67,6 @@
 			<dict>
 				<key>destinationuid</key>
 				<string>08785306-A32C-4996-BE92-0B58FA42D6EC</string>
-				<key>modifiers</key>
-				<integer>0</integer>
-				<key>modifiersubtext</key>
-				<string></string>
-				<key>vitoclose</key>
-				<false/>
-			</dict>
-		</array>
-		<key>B7CDB1C1-BDE9-4FE2-A857-85901CCE64F0</key>
-		<array>
-			<dict>
-				<key>destinationuid</key>
-				<string>C2776556-871B-419C-BC63-D556C2BD1EC2</string>
 				<key>modifiers</key>
 				<integer>0</integer>
 				<key>modifiersubtext</key>
@@ -170,7 +183,7 @@ echo $result;
 				<key>subtext</key>
 				<string></string>
 				<key>title</key>
-				<string>Apple Music Recommand...</string>
+				<string>Apple Music Recommand</string>
 				<key>type</key>
 				<integer>1</integer>
 				<key>withspace</key>
@@ -180,72 +193,6 @@ echo $result;
 			<string>alfred.workflow.input.scriptfilter</string>
 			<key>uid</key>
 			<string>2EFDEAEE-7583-43D0-BBFA-B85844AE458D</string>
-			<key>version</key>
-			<integer>3</integer>
-		</dict>
-		<dict>
-			<key>config</key>
-			<dict>
-				<key>alfredfiltersresults</key>
-				<true/>
-				<key>alfredfiltersresultsmatchmode</key>
-				<integer>0</integer>
-				<key>argumenttreatemptyqueryasnil</key>
-				<true/>
-				<key>argumenttrimmode</key>
-				<integer>0</integer>
-				<key>argumenttype</key>
-				<integer>1</integer>
-				<key>escaping</key>
-				<integer>102</integer>
-				<key>queuedelaycustom</key>
-				<integer>3</integer>
-				<key>queuedelayimmediatelyinitially</key>
-				<true/>
-				<key>queuedelaymode</key>
-				<integer>0</integer>
-				<key>queuemode</key>
-				<integer>1</integer>
-				<key>runningsubtext</key>
-				<string>Loading...</string>
-				<key>script</key>
-				<string>&lt;?php
-require_once getenv("alfred_preferences") .
-    DIRECTORY_SEPARATOR .
-    "workflows" .
-    DIRECTORY_SEPARATOR .
-    getenv("alfred_workflow_uid") .
-    DIRECTORY_SEPARATOR .
-    "scripts" .
-    DIRECTORY_SEPARATOR .
-    "AlfredAdapter.php";
-
-$rid = getenv("rid");
-$cache_dir = getenv("alfred_workflow_cache");
-$cache_file_name = getenv("cache_file_name");
-
-$result = getRecRowDetailAlfred($rid, $cache_dir, $cache_file_name)
-    |&gt; (fn($x) =&gt; json_encode($x, JSON_UNESCAPED_UNICODE))
-;
-echo $result;
-</string>
-				<key>scriptargtype</key>
-				<integer>1</integer>
-				<key>scriptfile</key>
-				<string></string>
-				<key>subtext</key>
-				<string></string>
-				<key>title</key>
-				<string>Music</string>
-				<key>type</key>
-				<integer>1</integer>
-				<key>withspace</key>
-				<true/>
-			</dict>
-			<key>type</key>
-			<string>alfred.workflow.input.scriptfilter</string>
-			<key>uid</key>
-			<string>B7CDB1C1-BDE9-4FE2-A857-85901CCE64F0</string>
 			<key>version</key>
 			<integer>3</integer>
 		</dict>
@@ -266,6 +213,80 @@ echo $result;
 			<string>9FB3ECA6-BFA7-497C-85CE-658107CFEC11</string>
 			<key>version</key>
 			<integer>1</integer>
+		</dict>
+		<dict>
+			<key>config</key>
+			<dict>
+				<key>columncount</key>
+				<integer>4</integer>
+				<key>filterable</key>
+				<false/>
+				<key>fixedorder</key>
+				<false/>
+				<key>imageaspect</key>
+				<integer>0</integer>
+				<key>inputfile</key>
+				<string></string>
+				<key>inputtype</key>
+				<integer>0</integer>
+				<key>loadingtext</key>
+				<string></string>
+				<key>showsubtitles</key>
+				<true/>
+				<key>showtitles</key>
+				<true/>
+				<key>subtitlesinfooter</key>
+				<false/>
+				<key>titlesinfooter</key>
+				<false/>
+			</dict>
+			<key>type</key>
+			<string>alfred.workflow.userinterface.grid</string>
+			<key>uid</key>
+			<string>09B43DC3-7ACB-421F-B0ED-5DB657B92B1A</string>
+			<key>version</key>
+			<integer>1</integer>
+		</dict>
+		<dict>
+			<key>config</key>
+			<dict>
+				<key>concurrently</key>
+				<false/>
+				<key>escaping</key>
+				<integer>102</integer>
+				<key>script</key>
+				<string>&lt;?php
+require_once getenv("alfred_preferences") .
+    DIRECTORY_SEPARATOR .
+    "workflows" .
+    DIRECTORY_SEPARATOR .
+    getenv("alfred_workflow_uid") .
+    DIRECTORY_SEPARATOR .
+    "scripts" .
+    DIRECTORY_SEPARATOR .
+    "AlfredAdapter.php";
+
+$rid = getenv("rid");
+$cache_dir = getenv("alfred_workflow_cache");
+$cache_file_name = getenv("cache_file_name");
+
+$result = getRecRowDetailAlfred($rid, $cache_dir, $cache_file_name)
+    |&gt; (fn($x) =&gt; json_encode($x, JSON_UNESCAPED_UNICODE))
+;
+echo $result;</string>
+				<key>scriptargtype</key>
+				<integer>1</integer>
+				<key>scriptfile</key>
+				<string></string>
+				<key>type</key>
+				<integer>1</integer>
+			</dict>
+			<key>type</key>
+			<string>alfred.workflow.action.script</string>
+			<key>uid</key>
+			<string>1CEF41DA-C13F-4179-8129-626DA969153C</string>
+			<key>version</key>
+			<integer>2</integer>
 		</dict>
 		<dict>
 			<key>config</key>
@@ -344,9 +365,23 @@ echo $result;
 		<key>08785306-A32C-4996-BE92-0B58FA42D6EC</key>
 		<dict>
 			<key>xpos</key>
-			<real>620</real>
+			<real>775</real>
 			<key>ypos</key>
 			<real>65</real>
+		</dict>
+		<key>09B43DC3-7ACB-421F-B0ED-5DB657B92B1A</key>
+		<dict>
+			<key>xpos</key>
+			<real>355</real>
+			<key>ypos</key>
+			<real>45</real>
+		</dict>
+		<key>1CEF41DA-C13F-4179-8129-626DA969153C</key>
+		<dict>
+			<key>xpos</key>
+			<real>210</real>
+			<key>ypos</key>
+			<real>45</real>
 		</dict>
 		<key>2EFDEAEE-7583-43D0-BBFA-B85844AE458D</key>
 		<dict>
@@ -360,37 +395,28 @@ echo $result;
 		<key>832E2C8E-2F5F-44B5-AF9F-C2CC271DF30E</key>
 		<dict>
 			<key>xpos</key>
-			<real>800</real>
+			<real>955</real>
 			<key>ypos</key>
 			<real>30</real>
 		</dict>
 		<key>9FB3ECA6-BFA7-497C-85CE-658107CFEC11</key>
 		<dict>
 			<key>xpos</key>
-			<real>460</real>
-			<key>ypos</key>
-			<real>45</real>
-		</dict>
-		<key>B7CDB1C1-BDE9-4FE2-A857-85901CCE64F0</key>
-		<dict>
-			<key>note</key>
-			<string>Row detail</string>
-			<key>xpos</key>
-			<real>215</real>
+			<real>615</real>
 			<key>ypos</key>
 			<real>45</real>
 		</dict>
 		<key>C2776556-871B-419C-BC63-D556C2BD1EC2</key>
 		<dict>
 			<key>xpos</key>
-			<real>380</real>
+			<real>535</real>
 			<key>ypos</key>
 			<real>75</real>
 		</dict>
 		<key>DC7170A1-8BCC-4F27-91B0-CCDCFD6D857E</key>
 		<dict>
 			<key>xpos</key>
-			<real>720</real>
+			<real>875</real>
 			<key>ypos</key>
 			<real>60</real>
 		</dict>

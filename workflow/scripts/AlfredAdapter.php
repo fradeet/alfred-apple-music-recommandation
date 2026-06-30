@@ -21,64 +21,71 @@ function initRecPageAlfred(
     string $cache_dir,
     int $cache_duration_time = 14400,
 ): AlfredSF {
-    $rec_json = getRecommandation(
-        new AppleMusicAccountConfig($auth_token, $media_token),
-    );
-    // Codex TODO 清洗对象，不显示的 clearUnUseItem
-    $filename = time() . ".json";
-    $cache_file_path =
-        $cache_dir .
-        DIRECTORY_SEPARATOR .
-        "Music-Recommend" .
-        DIRECTORY_SEPARATOR .
-        $filename;
-    $cache_thumb_path =
-        $cache_dir . DIRECTORY_SEPARATOR . "Cache" . DIRECTORY_SEPARATOR;
+    try {
+        $rec_json = getRecommandation(
+            new AppleMusicAccountConfig($auth_token, $media_token),
+        );
+        $filename = time() . ".json";
+        $cache_file_path =
+            $cache_dir .
+            DIRECTORY_SEPARATOR .
+            "Music-Recommend" .
+            DIRECTORY_SEPARATOR .
+            $filename;
+        $cache_thumb_path =
+            $cache_dir . DIRECTORY_SEPARATOR . "Cache" . DIRECTORY_SEPARATOR;
 
-    $head_4_path =
-        $cache_thumb_path .
-        DIRECTORY_SEPARATOR .
-        time() .
-        DIRECTORY_SEPARATOR .
-        $filename;
-
-    $dir = dirname($cache_file_path);
-    if (!is_dir($dir)) {
-        mkdir($dir, recursive: true);
-    }
-    // Codex TODO genHead4 缓存“符合条件”的推荐列表的前 4 张在展示类型中的封面图片并拼接，后续用于展示。
-    file_put_contents($cache_file_path, $rec_json);
-    $rec_obj = json_decode($rec_json);
-    $items = [];
-    $rec_res = $rec_obj->resources->{"personal-recommendation"};
-    foreach ($rec_obj->data as $item) {
-        $res_item = $rec_res->{$item->id};
-        // Filter out items without a title
-        if (
-            property_exists($res_item->attributes, "title") &&
-            RecommandKindType::tryFrom($res_item->attributes->kind) !== null
-        ) {
-            $items[] = new AlfredSFItem(
-                $res_item->attributes->title->stringForDisplay,
-                text: new AlfredSFItemText(
-                    copy: $res_item->attributes->title->stringForDisplay,
-                    largetype: $res_item->attributes->title->stringForDisplay,
-                ),
-                variables: ["rid" => $res_item->id],
-                quicklookurl: "https://music.apple.com/",
-            );
+        $dir = dirname($cache_file_path);
+        if (!is_dir($dir)) {
+            mkdir($dir, recursive: true);
         }
-    }
+        $rec_obj = json_decode($rec_json) |> clearUnUseItem(...);
+        $head_4_paths = genHead4Thumb($rec_obj, $cache_thumb_path);
+        file_put_contents(
+            $cache_file_path,
+            json_encode($rec_obj, JSON_UNESCAPED_UNICODE),
+        );
+        $items = [];
+        $rec_res = $rec_obj->resources->{"personal-recommendation"};
+        foreach ($rec_obj->data as $item) {
+            $res_item = $rec_res->{$item->id};
+            // Filter out items without a title
+            if (
+                isset($res_item->attributes->title->stringForDisplay) &&
+                RecommandKindType::tryFrom($res_item->attributes->kind) !== null
+            ) {
+                $items[] = new AlfredSFItem(
+                    $res_item->attributes->title->stringForDisplay,
+                    icon: isset($head_4_paths[$res_item->id])
+                        ? new AlfredSFItemIcon($head_4_paths[$res_item->id])
+                        : null,
+                    text: new AlfredSFItemText(
+                        copy: $res_item->attributes->title->stringForDisplay,
+                        largetype: $res_item->attributes->title
+                            ->stringForDisplay,
+                    ),
+                    variables: ["rid" => $res_item->id],
+                    quicklookurl: "https://music.apple.com/",
+                );
+            }
+        }
 
-    $cache_config =
-        $cache_duration_time != null
-            ? new AlfredSFCache($cache_duration_time, true)
-            : null;
-    return new AlfredSF(
-        items: $items,
-        cache: $cache_config,
-        variables: ["cache_file_name" => $filename],
-    );
+        $cache_config =
+            $cache_duration_time != null
+                ? new AlfredSFCache($cache_duration_time, true)
+                : null;
+        return new AlfredSF(
+            items: $items,
+            cache: $cache_config,
+            variables: ["cache_file_name" => $filename],
+        );
+    } catch (Exception $e) {
+        fwrite(
+            STDERR,
+            sprintf("%s\n", $e),
+        );
+        return RETURN_ERROR_ALFRED;
+    }
 }
 
 /**
@@ -98,13 +105,23 @@ function getRecRowDetailAlfred(
         "Music-Recommend" .
         DIRECTORY_SEPARATOR .
         $cache_file_name;
+
     $rec_data = file_get_contents($cache_path) |> json_decode(...);
     $rec_row = $rec_data->resources->{"personal-recommendation"}->{$rid};
     $rec_row_data = $rec_row->relationships->contents->data;
     $items = [];
     $rec_res = $rec_data->resources;
+    $thumb_cache_path =
+        $cache_dir .
+        DIRECTORY_SEPARATOR .
+        "Cache" .
+        DIRECTORY_SEPARATOR .
+        "Artwork";
+    $row_thumb_path_map = getRowThumb($rec_row, $rec_res, $thumb_cache_path);
+
     foreach ($rec_row_data as $item) {
         if (
+            // TODO Maybe can remove after clearUnUseItem
             array_any(
                 $rec_row->attributes->resourceTypes,
                 fn($v) => ResourcesType::tryFrom($v) !== null,
@@ -118,13 +135,36 @@ function getRecRowDetailAlfred(
             if ($res_type === ResourcesType::Albums) {
                 $items[] = new AlfredSFItem(
                     $item->attributes->name,
+                    icon: isset(
+                        $row_thumb_path_map[$res_type->value][$item->id],
+                    )
+                        ? new AlfredSFItemIcon(
+                            $row_thumb_path_map[$res_type->value][$item->id],
+                        )
+                        : null,
                     subtitle: $item->attributes->artistName .
                         " - " .
                         $item->attributes->releaseDate,
                     arg: $item->attributes->url,
                 );
             } elseif ($res_type === ResourcesType::Playlists) {
-                // TODO
+                $items[] = new AlfredSFItem(
+                    $item->attributes->name,
+                    icon: isset(
+                        $row_thumb_path_map[$res_type->value][$item->id],
+                    )
+                        ? new AlfredSFItemIcon(
+                            $row_thumb_path_map[$res_type->value][$item->id],
+                        )
+                        : null,
+                    subtitle: trim(
+                        ($item->attributes->curatorName ?? "") .
+                            " - " .
+                            ($item->attributes->playlistType ?? ""),
+                        " -",
+                    ),
+                    arg: $item->attributes->url,
+                );
             }
         }
     }
