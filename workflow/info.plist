@@ -372,14 +372,14 @@ echo $result;
 		<key>08785306-A32C-4996-BE92-0B58FA42D6EC</key>
 		<dict>
 			<key>xpos</key>
-			<real>775</real>
+			<real>630</real>
 			<key>ypos</key>
 			<real>65</real>
 		</dict>
 		<key>09B43DC3-7ACB-421F-B0ED-5DB657B92B1A</key>
 		<dict>
 			<key>xpos</key>
-			<real>270</real>
+			<real>205</real>
 			<key>ypos</key>
 			<real>45</real>
 		</dict>
@@ -395,42 +395,42 @@ echo $result;
 		<key>58B677C0-1951-4047-8E96-9816E03904DC</key>
 		<dict>
 			<key>xpos</key>
-			<real>955</real>
+			<real>810</real>
 			<key>ypos</key>
 			<real>145</real>
 		</dict>
 		<key>8306CB87-1C85-4EE4-BB88-DF6445BFBB33</key>
 		<dict>
 			<key>xpos</key>
-			<real>875</real>
+			<real>730</real>
 			<key>ypos</key>
 			<real>175</real>
 		</dict>
 		<key>832E2C8E-2F5F-44B5-AF9F-C2CC271DF30E</key>
 		<dict>
 			<key>xpos</key>
-			<real>955</real>
+			<real>810</real>
 			<key>ypos</key>
 			<real>30</real>
 		</dict>
 		<key>9FB3ECA6-BFA7-497C-85CE-658107CFEC11</key>
 		<dict>
 			<key>xpos</key>
-			<real>615</real>
+			<real>470</real>
 			<key>ypos</key>
 			<real>45</real>
 		</dict>
 		<key>C2776556-871B-419C-BC63-D556C2BD1EC2</key>
 		<dict>
 			<key>xpos</key>
-			<real>535</real>
+			<real>390</real>
 			<key>ypos</key>
 			<real>75</real>
 		</dict>
 		<key>DC7170A1-8BCC-4F27-91B0-CCDCFD6D857E</key>
 		<dict>
 			<key>xpos</key>
-			<real>875</real>
+			<real>730</real>
 			<key>ypos</key>
 			<real>60</real>
 		</dict>
